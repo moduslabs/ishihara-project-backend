@@ -1,0 +1,59 @@
+service: plate-generator
+
+frameworkVersion: '2 || 3'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  lambdaHashingVersion: 20201221
+
+functions:
+  generatorHandler:
+    handler: ./src/index.handle
+    role: IshiharaRole
+    timeout: 150
+    events:
+      - schedule: cron(59 21 * * ? *)
+    environment:
+      FONTCONFIG_PATH: /var/task/fonts
+
+resources:
+  Resources:
+    IshiharaBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ishihara${self:provider.stage}
+    IshiharaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: plate-ishihara-policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - s3:PutObject
+                    - s3:PutObjectAcl
+                  Resource:
+                    !Sub
+                      - "arn:aws:s3:::${BucketName}/*"
+                      - {BucketName: !Ref IshiharaBucket}
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    Fn::Sub:
+                      - arn:aws:logs:${Region}:${AccountId}:log-group:/aws/lambda/*:*:*
+                      - { Region: !Ref AWS::Region, AccountId: !Ref AWS::AccountId }

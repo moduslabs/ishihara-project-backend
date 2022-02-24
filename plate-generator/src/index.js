@@ -1,19 +1,20 @@
-const Generator = require('./factory/generator');
-const { S3ClientAdapterV2 } = require('./s3/s3Adapterv2')
+const { Generator } = require('./factory/generator');
+const { S3ClientAdapterV2 } = require('./s3/s3Adapterv2');
+const { CircleFactory } = require('./factory/circleFactory');
+const { PlateContentGenerator } = require('./plategenerator/platecontentgenerator')
 
 const maxWidth = 800;
 const maxHeight = 800;
 
 const s3ClientAdapterV2 = new S3ClientAdapterV2();
-const generator = new Generator(maxWidth, maxHeight, s3ClientAdapterV2);
+const plateContentGenerator = new PlateContentGenerator();
+const circleFactory = new CircleFactory(maxWidth, maxHeight)
 
-async function startGeneration() {
+const generator = new Generator(maxWidth, maxHeight, s3ClientAdapterV2, plateContentGenerator, circleFactory);
+
+async function handle() {
     generator.generate();
-    await generator.sendToS3();
+    await generator.storeS3();
 }
 
-(async function () {
-    for (let i = 0; i < 1; i++) {
-        await startGeneration();
-    }
-})()
+module.exports = { handle }
