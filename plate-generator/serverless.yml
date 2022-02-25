@@ -12,9 +12,9 @@ functions:
   generatorHandler:
     handler: ./src/index.handle
     role: IshiharaRole
-    timeout: 150
+    timeout: 300
     events:
-      - schedule: cron(59 21 * * ? *)
+      - schedule: cron(59 1 * * ? *)
     environment:
       FONTCONFIG_PATH: /var/task/fonts
 

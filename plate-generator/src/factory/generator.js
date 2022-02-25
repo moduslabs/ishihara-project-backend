@@ -1,4 +1,4 @@
-const path = require('path');
+const { createWriteStream } = require('fs');
 const { kdTree } = require('../kd3/kdTree');
 const { createCanvas } = require('canvas')
 
@@ -17,6 +17,7 @@ class Generator {
     }
 
     generate() {
+        console.time('start')
         const drawStyle = 0;
         const plate = this.generatePlateImage();
         this.name = plate.content;
@@ -29,46 +30,53 @@ class Generator {
         var currentStep = 0;
         var area = (this.canvas.width * this.canvas.height); //determina numbers of points
 
-        var steps = area / 150 * 3;
+        var steps = (area / 150) * 1.5;
 
-        while (currentStep < steps) {
-            var tries = 0;
+        console.log('start while')
+        var paintPlate = (function () {
+            while (currentStep < steps) {
+                var tries = 0;
 
-            while (true) {
-                tries++;
-                if (tries > 100) {
-                    currentStep++;
-                    continue;
-                }
-
-                var circle = this.circleFactory.create();
-                var nearest = tree.nearest(circle, 8);
-
-                var intersects = false;
-
-                for (var j = 0; j < nearest.length; j++) {
-                    var nearCircle = nearest[j][0];
-                    if (this.circleFactory.intersects(circle, nearCircle)) {
-                        intersects = true;
-                        break;
+                while (true) {
+                    tries++;
+                    if (tries > 100) {
+                        currentStep++;
+                        paintPlate();
+                        return;
                     }
-                }
 
-                if (intersects) {
-                    continue;
-                }
+                    var circle = this.circleFactory.create();
+                    var nearest = tree.nearest(circle, 8);
 
-                currentStep++;
-                if (this.circleFactory.isOverlapping(plate.data, circle) != invertColors) {
-                    this.ctx.fillStyle = colorsOn[drawStyle][Math.floor(Math.random() * colorsOn[drawStyle].length)];
-                } else {
-                    this.ctx.fillStyle = colorsOff[drawStyle][Math.floor(Math.random() * colorsOff[drawStyle].length)];
-                }
-                this.circleFactory.draw(this.ctx, circle);
+                    var intersects = false;
 
-                tree.insert(circle);
+                    for (var j = 0; j < nearest.length; j++) {
+                        var nearCircle = nearest[j][0];
+                        if (this.circleFactory.intersects(circle, nearCircle)) {
+                            intersects = true;
+                            break;
+                        }
+                    }
+
+                    if (intersects) {
+                        continue;
+                    }
+
+                    currentStep++;
+                    if (this.circleFactory.isOverlapping(plate.data, circle) != invertColors) {
+                        this.ctx.fillStyle = colorsOn[drawStyle][Math.floor(Math.random() * colorsOn[drawStyle].length)];
+                    } else {
+                        this.ctx.fillStyle = colorsOff[drawStyle][Math.floor(Math.random() * colorsOff[drawStyle].length)];
+                    }
+                    this.circleFactory.draw(this.ctx, circle);
+
+                    tree.insert(circle);
+                }
             }
-        }
+        }).bind(this);
+
+        paintPlate();
+        console.time('start')
     }
 
     generatePlateImage() {
@@ -90,6 +98,16 @@ class Generator {
     fillCanvas(style) {
         this.ctx.fillStyle = style;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    async store() {
+        console.log('storing')
+        const out = createWriteStream(this.name + '.png');
+        const stream = this.canvas.createPNGStream();
+        stream.pipe(out);
+        await new Promise((res, rej) => {
+            out.on('finish', res);
+        })
     }
 
     async storeS3() {
