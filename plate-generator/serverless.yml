@@ -4,7 +4,7 @@ frameworkVersion: '2 || 3'
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: 20201221
 
@@ -12,11 +12,13 @@ functions:
   generatorHandler:
     handler: ./src/index.handle
     role: IshiharaRole
-    timeout: 300
+    timeout: 120
+    memorySize: 256
     events:
-      - schedule: cron(59 1 * * ? *)
+      - schedule: rate(1 minute)
     environment:
       FONTCONFIG_PATH: /var/task/fonts
+      LD_PRELOAD: /var/task/node_modules/canvas/build/Release/libz.so.1
 
 resources:
   Resources:

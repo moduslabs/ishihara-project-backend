@@ -18,7 +18,7 @@ class Generator {
 
     generate() {
         console.time('start')
-        const drawStyle = 0;
+        const drawStyle = Math.floor(Math.random() * 6);
         const plate = this.generatePlateImage();
         this.name = plate.content;
         this.fillCanvas('white')
@@ -30,7 +30,7 @@ class Generator {
         var currentStep = 0;
         var area = (this.canvas.width * this.canvas.height); //determina numbers of points
 
-        var steps = (area / 150) * 1.5;
+        var steps = (area / 150) * 7;
 
         console.log('start while')
         var paintPlate = (function () {
@@ -82,7 +82,7 @@ class Generator {
     generatePlateImage() {
         this.fillCanvas('white')
         this.ctx.fillStyle = '#000';
-        this.ctx.font = '400px Arial';
+        this.ctx.font = '180px Arial';
         this.ctx.textBaseline = 'middle';
         this.ctx.textAlign = 'center';
 

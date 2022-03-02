@@ -6,8 +6,8 @@ class CircleFactory {
     }
 
     create() {
-        var minRadius = (this.canvasWidth + this.canvasHeight) / 300;
-        var maxRadius = (this.canvasWidth + this.canvasHeight) / 150;
+        var minRadius = (this.canvasWidth + this.canvasHeight) / 250;
+        var maxRadius = (this.canvasWidth + this.canvasHeight) / 100;
         var radiusInternalCircle = minRadius + Math.random() * (maxRadius - minRadius);
 
         var angle = Math.random() * 2 * Math.PI;
@@ -23,8 +23,8 @@ class CircleFactory {
         var y = circle.y;
         var r = circle.radius;
 
-        var dimensionsX = [x, x, x, x - r, x + r, x - r * 0.93, x - r * 0.93, x + r * 0.93, x + r * 0.93, x - r * 0.70, x - r * 0.70, x + r * 0.70, x + r * 0.70] //Calcula para ver se sobrepoem no eixo X
-        var dimensionsY = [y, y - r, y + r, y, y, y + r * 0.93, y - r * 0.93, y + r * 0.93, y - r * 0.93, y + r * 0.70, y - r * 0.70, y + r * 0.70, y - r * 0.70] //Calcula para ver se sobrepoem no eixo Y
+        var dimensionsX = [x, x, x, x - r, x + r, x - r * 0.93, x - r * 0.93, x + r * 0.93, x + r * 0.93] //Calcula para ver se sobrepoem no eixo X
+        var dimensionsY = [y, y - r, y + r, y, y, y + r * 0.93, y - r * 0.93, y + r * 0.93, y - r * 0.93] //Calcula para ver se sobrepoem no eixo Y
 
         for (var i = 0; i < dimensionsX.length; i++) {
             var x = dimensionsX[i];
