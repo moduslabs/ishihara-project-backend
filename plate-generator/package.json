@@ -1,18 +1,5 @@
 {
-  "name": "ishihara-generator",
-  "version": "1.0.0",
-  "description": "Project to generation of Ishihara Plates",
-  "main": "src/index.js",
-  "scripts": {
-    "generate": "node ./src/index.js"
-  },
-  "keywords": [
-    "ishihara"
-  ],
-  "author": "Rafael Waterkemper",
-  "license": "MIT",
-  "dependencies": {
-    "aws-sdk": "^2.1080.0",
-    "canvas": "2.9.0"
+  "devDependencies": {
+    "serverless-iam-roles-per-function": "^3.2.0"
   }
 }

@@ -1,0 +1,33 @@
+handler: ./algorithm/src/index.handle
+timeout: 60
+memorySize: 256
+events:
+  - schedule: rate(1 minute)
+environment:
+  BUCKET_S3: ishihara${self:provider.stage}
+  FONTCONFIG_PATH: /var/task/algorithm/fonts
+  LD_PRELOAD: /var/task/algorithm/node_modules/canvas/build/Release/libz.so.1
+  LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/var/task/algorithm/lib
+
+package:
+  patterns:
+    - ../../algorithm
+
+iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - s3:PutObject
+      - s3:PutObjectAcl
+    Resource:
+      !Sub
+        - "arn:aws:s3:::${BucketName}/*"
+        - {BucketName: !Ref IshiharaBucket}
+  - Effect: Allow
+    Action:
+      - logs:CreateLogGroup
+      - logs:CreateLogStream
+      - logs:PutLogEvents
+    Resource:
+      Fn::Sub:
+        - arn:aws:logs:${Region}:${AccountId}:log-group:/aws/lambda/*:*:*
+        - { Region: !Ref AWS::Region, AccountId: !Ref AWS::AccountId }

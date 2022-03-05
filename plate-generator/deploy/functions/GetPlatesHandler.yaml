@@ -1,0 +1,39 @@
+handler: ./api/src/getplates.handle
+events:
+  - http:
+      path: plates
+      method: get
+environment:
+  BUCKET_S3: ishihara${self:provider.stage}      
+
+package:
+  patterns:
+    - '../../api'
+    - '!algorithm/**'
+
+iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - s3:ListBucket
+    Resource:
+      !Sub
+        - "arn:aws:s3:::${BucketName}"
+        - {BucketName: !Ref IshiharaBucket}
+  - Effect: Allow
+    Action:
+      - s3:GetObject
+      - s3:GetObjectVersion
+      - s3:ListBucket
+    Resource:
+      !Sub
+        - "arn:aws:s3:::${BucketName}/*"
+        - {BucketName: !Ref IshiharaBucket}
+  - Effect: Allow
+    Action:
+      - logs:CreateLogGroup
+      - logs:CreateLogStream
+      - logs:PutLogEvents
+    Resource:
+      Fn::Sub:
+        - arn:aws:logs:${Region}:${AccountId}:log-group:/aws/lambda/*:*:*
+        - { Region: !Ref AWS::Region, AccountId: !Ref AWS::AccountId }

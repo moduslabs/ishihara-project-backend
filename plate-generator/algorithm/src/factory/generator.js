@@ -3,6 +3,7 @@ const { kdTree } = require('../kd3/kdTree');
 const { createCanvas } = require('canvas')
 
 const { colorsOn, colorsOff } = require('../colors/colors')
+const BUCKET_S3 = process.env.BUCKET_S3;
 const invertColors = false;
 
 class Generator {
@@ -114,7 +115,7 @@ class Generator {
         const stream = this.canvas.createPNGStream();
 
         await this.s3Client.put({
-            bucket: 'ishiharadev',
+            bucket: BUCKET_S3,
             key: this.name + '.png',
             body: stream
         });

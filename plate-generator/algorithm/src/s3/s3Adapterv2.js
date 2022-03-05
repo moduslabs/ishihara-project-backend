@@ -8,7 +8,7 @@ class S3ClientAdapterV2 {
 
     async put({ bucket, key, body }) {
         try {
-            const params = { Bucket: bucket, Key: key, Body: body };
+            const params = { Bucket: bucket, Key: key, Body: body, ACL: 'public-read' };
             await client.upload(params).promise();
         } catch (err) {
             console.log(err.message)

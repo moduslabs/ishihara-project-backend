@@ -1,4 +1,4 @@
-service: plate-generator
+service: ishihara-project
 
 frameworkVersion: '2 || 3'
 
@@ -9,53 +9,17 @@ provider:
   lambdaHashingVersion: 20201221
 
 functions:
-  generatorHandler:
-    handler: ./src/index.handle
-    role: IshiharaRole
-    timeout: 120
-    memorySize: 256
-    events:
-      - schedule: rate(1 minute)
-    environment:
-      FONTCONFIG_PATH: /var/task/fonts
-      LD_PRELOAD: /var/task/node_modules/canvas/build/Release/libz.so.1
+  generatorHandler: ${file(./deploy/functions/GeneratorHandler.yaml)}
+  apiGetPlates: ${file(./deploy/functions/GetPlatesHandler.yaml)}
+
+package:
+  individually: true
+  patterns:
+    -'!deploy/**'
+
+plugins:
+  - serverless-iam-roles-per-function
 
 resources:
   Resources:
-    IshiharaBucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: ishihara${self:provider.stage}
-    IshiharaRole:
-      Type: AWS::IAM::Role
-      Properties:
-        AssumeRolePolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                  - lambda.amazonaws.com
-              Action: sts:AssumeRole
-        Policies:
-          - PolicyName: plate-ishihara-policy
-            PolicyDocument:
-              Version: "2012-10-17"
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - s3:PutObject
-                    - s3:PutObjectAcl
-                  Resource:
-                    !Sub
-                      - "arn:aws:s3:::${BucketName}/*"
-                      - {BucketName: !Ref IshiharaBucket}
-                - Effect: Allow
-                  Action:
-                    - logs:CreateLogGroup
-                    - logs:CreateLogStream
-                    - logs:PutLogEvents
-                  Resource:
-                    Fn::Sub:
-                      - arn:aws:logs:${Region}:${AccountId}:log-group:/aws/lambda/*:*:*
-                      - { Region: !Ref AWS::Region, AccountId: !Ref AWS::AccountId }
+    IshiharaBucket: ${file(./deploy/resources/BucketIshihara.yaml)}
