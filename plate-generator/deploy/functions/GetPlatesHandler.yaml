@@ -1,4 +1,4 @@
-handler: ./api/src/getplates.handle
+handler: ./api/src/platecontroller.handle
 events:
   - http:
       path: plates

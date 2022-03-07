@@ -7,12 +7,12 @@ const BUCKET_S3 = process.env.BUCKET_S3;
 const invertColors = false;
 
 class Generator {
-    constructor(maxWidth, maxHeight, s3Client, plateGenerator, circleFactory) {
+    constructor(maxWidth, maxHeight, s3Client, plateGenerator, spotFactory) {
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
         this.s3Client = s3Client;
         this.plateValueGenerator = plateGenerator;
-        this.circleFactory = circleFactory;
+        this.spotFactory = spotFactory;
         this.canvas = createCanvas(maxWidth, maxHeight);
         this.ctx = this.canvas.getContext('2d');
     }
@@ -46,14 +46,14 @@ class Generator {
                         return;
                     }
 
-                    var circle = this.circleFactory.create();
-                    var nearest = tree.nearest(circle, 8);
+                    var spot = this.spotFactory.create();
+                    var nearest = tree.nearest(spot, 8);
 
                     var intersects = false;
 
                     for (var j = 0; j < nearest.length; j++) {
-                        var nearCircle = nearest[j][0];
-                        if (this.circleFactory.intersects(circle, nearCircle)) {
+                        var nearSpot = nearest[j][0];
+                        if (this.spotFactory.intersects(spot, nearSpot)) {
                             intersects = true;
                             break;
                         }
@@ -64,20 +64,19 @@ class Generator {
                     }
 
                     currentStep++;
-                    if (this.circleFactory.isOverlapping(plate.data, circle) != invertColors) {
+                    if (this.spotFactory.isOverlapping(plate.data, spot) != invertColors) {
                         this.ctx.fillStyle = colorsOn[drawStyle][Math.floor(Math.random() * colorsOn[drawStyle].length)];
                     } else {
                         this.ctx.fillStyle = colorsOff[drawStyle][Math.floor(Math.random() * colorsOff[drawStyle].length)];
                     }
-                    this.circleFactory.draw(this.ctx, circle);
+                    this.spotFactory.draw(this.ctx, spot);
 
-                    tree.insert(circle);
+                    tree.insert(spot);
                 }
             }
         }).bind(this);
 
         paintPlate();
-        console.time('start')
     }
 
     generatePlateImage() {
@@ -102,12 +101,11 @@ class Generator {
     }
 
     async store() {
-        console.log('storing')
         const out = createWriteStream(this.name + '.png');
         const stream = this.canvas.createPNGStream();
         stream.pipe(out);
         await new Promise((res, rej) => {
-            out.on('finish', res);
+            out.on('finished', res);
         })
     }
 

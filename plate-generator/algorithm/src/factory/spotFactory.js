@@ -1,4 +1,4 @@
-class CircleFactory {
+class SpotFactory {
 
     constructor(canvasWidth, canvasHeight) {
         this.canvasWidth = canvasWidth;
@@ -58,4 +58,4 @@ class CircleFactory {
     }
 }
 
-module.exports = { CircleFactory }
+module.exports = { SpotFactory }
