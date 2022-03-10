@@ -56,7 +56,7 @@ class PlateController {
         const alreadyChosen = [];
 
         for (let i = 0; i < limit; i++) {
-            const filePosition = Math.floor(Math.random() * limit);
+            const filePosition = Math.floor(Math.random() * files.length);
             if (alreadyChosen.includes(filePosition)) {
                 i--;
                 continue;

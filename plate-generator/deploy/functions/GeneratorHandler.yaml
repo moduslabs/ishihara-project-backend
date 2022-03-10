@@ -2,7 +2,9 @@ handler: ./algorithm/src/index.handle
 timeout: 60
 memorySize: 256
 events:
-  - schedule: rate(1 minute)
+  - schedule: 
+      rate: rate(1 minute)
+      enabled: false
 environment:
   BUCKET_S3: ishihara${self:provider.stage}
   FONTCONFIG_PATH: /var/task/algorithm/fonts

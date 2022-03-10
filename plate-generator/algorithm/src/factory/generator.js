@@ -1,10 +1,9 @@
 const { createWriteStream } = require('fs');
 const { kdTree } = require('../kd3/kdTree');
-const { createCanvas } = require('canvas')
+const { createCanvas } = require('canvas');
 
-const { colorsOn, colorsOff } = require('../colors/colors')
+const { colorsFigure, colorsBackground } = require('../colors/colors');
 const BUCKET_S3 = process.env.BUCKET_S3;
-const invertColors = false;
 
 class Generator {
     constructor(maxWidth, maxHeight, s3Client, plateGenerator, spotFactory) {
@@ -18,41 +17,38 @@ class Generator {
     }
 
     generate() {
-        console.time('start')
-        const drawStyle = Math.floor(Math.random() * 6);
+        const drawStyle = Math.floor(Math.random() * (colorsFigure.length));
         const plate = this.generatePlateImage();
         this.name = plate.content;
         this.fillCanvas('white')
 
-        var tree = new kdTree([], function (a, b) {
+        const tree = new kdTree([], function (a, b) {
             return Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2);
         }, ['x', 'y']);
 
-        var currentStep = 0;
-        var area = (this.canvas.width * this.canvas.height); //determina numbers of points
+        let currentStep = 0;
+        const area = (this.canvas.width * this.canvas.height);
+        const steps = (area / 150) * 7;
 
-        var steps = (area / 150) * 7;
-
-        console.log('start while')
-        var paintPlate = (function () {
+        const paintPlate = (function () {
             while (currentStep < steps) {
                 var tries = 0;
 
                 while (true) {
                     tries++;
-                    if (tries > 100) {
+                    if (tries > 1500) {
                         currentStep++;
                         paintPlate();
                         return;
                     }
 
-                    var spot = this.spotFactory.create();
-                    var nearest = tree.nearest(spot, 8);
+                    const spot = this.spotFactory.create();
+                    const nearest = tree.nearest(spot, 8);
 
-                    var intersects = false;
+                    let intersects = false;
 
-                    for (var j = 0; j < nearest.length; j++) {
-                        var nearSpot = nearest[j][0];
+                    for (let j = 0; j < nearest.length; j++) {
+                        const nearSpot = nearest[j][0];
                         if (this.spotFactory.intersects(spot, nearSpot)) {
                             intersects = true;
                             break;
@@ -64,10 +60,10 @@ class Generator {
                     }
 
                     currentStep++;
-                    if (this.spotFactory.isOverlapping(plate.data, spot) != invertColors) {
-                        this.ctx.fillStyle = colorsOn[drawStyle][Math.floor(Math.random() * colorsOn[drawStyle].length)];
+                    if (this.spotFactory.isOverlapping(plate.data, spot)) {
+                        this.ctx.fillStyle = colorsFigure[drawStyle][Math.floor(Math.random() * colorsFigure[drawStyle].length)];
                     } else {
-                        this.ctx.fillStyle = colorsOff[drawStyle][Math.floor(Math.random() * colorsOff[drawStyle].length)];
+                        this.ctx.fillStyle = colorsBackground[drawStyle][Math.floor(Math.random() * colorsBackground[drawStyle].length)];
                     }
                     this.spotFactory.draw(this.ctx, spot);
 
@@ -80,7 +76,7 @@ class Generator {
     }
 
     generatePlateImage() {
-        this.fillCanvas('white')
+        this.fillCanvas('white');
         this.ctx.fillStyle = '#000';
         this.ctx.font = '180px Arial';
         this.ctx.textBaseline = 'middle';
@@ -91,8 +87,12 @@ class Generator {
 
         return {
             content: plateContent,
-            data: this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+            data: this.extractCanvasImage()
         };
+    }
+
+    extractCanvasImage() {
+        return this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
     }
 
     fillCanvas(style) {
