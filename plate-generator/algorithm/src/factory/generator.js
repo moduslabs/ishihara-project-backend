@@ -30,50 +30,46 @@ class Generator {
         const area = (this.canvas.width * this.canvas.height);
         const steps = (area / 150) * 7;
 
-        const paintPlate = (function () {
-            while (currentStep < steps) {
-                var tries = 0;
+        paintPlate: while (currentStep < steps) {
+            var tries = 0;
 
-                while (true) {
-                    tries++;
-                    if (tries > 1500) {
-                        currentStep++;
-                        paintPlate();
-                        return;
-                    }
-
-                    const spot = this.spotFactory.create();
-                    const nearest = tree.nearest(spot, 8);
-
-                    let intersects = false;
-
-                    for (let j = 0; j < nearest.length; j++) {
-                        const nearSpot = nearest[j][0];
-                        if (this.spotFactory.intersects(spot, nearSpot)) {
-                            intersects = true;
-                            break;
-                        }
-                    }
-
-                    if (intersects) {
-                        continue;
-                    }
-
+            while (true) {
+                tries++;
+                if (tries > 1500) {
                     currentStep++;
-                    if (this.spotFactory.isOverlapping(plate.data, spot)) {
-                        this.ctx.fillStyle = colorsFigure[drawStyle][Math.floor(Math.random() * colorsFigure[drawStyle].length)];
-                    } else {
-                        this.ctx.fillStyle = colorsBackground[drawStyle][Math.floor(Math.random() * colorsBackground[drawStyle].length)];
-                    }
-                    this.spotFactory.draw(this.ctx, spot);
-
-                    tree.insert(spot);
+                    continue paintPlate;
                 }
-            }
-        }).bind(this);
 
-        paintPlate();
-    }
+                const spot = this.spotFactory.create();
+                const nearest = tree.nearest(spot, 8);
+
+                let intersects = false;
+
+                for (let j = 0; j < nearest.length; j++) {
+                    const nearSpot = nearest[j][0];
+                    if (this.spotFactory.intersects(spot, nearSpot)) {
+                        intersects = true;
+                        break;
+                    }
+                }
+
+                if (intersects) {
+                    continue;
+                }
+
+                currentStep++;
+                if (this.spotFactory.isOverlapping(plate.data, spot)) {
+                    this.ctx.fillStyle = colorsFigure[drawStyle][Math.floor(Math.random() * colorsFigure[drawStyle].length)];
+                } else {
+                    this.ctx.fillStyle = colorsBackground[drawStyle][Math.floor(Math.random() * colorsBackground[drawStyle].length)];
+                }
+                this.spotFactory.draw(this.ctx, spot);
+
+                tree.insert(spot);
+            }
+        }
+    };
+
 
     generatePlateImage() {
         this.fillCanvas('white');

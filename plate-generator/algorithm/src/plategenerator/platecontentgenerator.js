@@ -17,7 +17,7 @@ class PlateContentGenerator {
             result = result + this._getCaracter();
         }
 
-        return "GN";
+        return result;
     }
 }
 
