@@ -56,9 +56,9 @@ class SpotFactory {
         return axisSum * reductionOfDistanceBetweenSpots < radiusSum;
     }
 
-    draw(canvasCtx, circle) {
+    draw(canvasCtx, spot) {
         canvasCtx.beginPath();
-        canvasCtx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+        canvasCtx.arc(spot.x, spot.y, spot.radius, 0, 2 * Math.PI);
         canvasCtx.fill();
         canvasCtx.closePath();
     }
