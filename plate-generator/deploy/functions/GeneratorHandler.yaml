@@ -1,6 +1,5 @@
 handler: ./algorithm/src/index.handle
-timeout: 60
-memorySize: 256
+timeout: 300
 events:
   - schedule: 
       rate: rate(1 minute)

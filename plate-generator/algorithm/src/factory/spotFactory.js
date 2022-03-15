@@ -10,7 +10,7 @@ class SpotFactory {
     }
 
     create() {
-        const minRadius = (this.canvasWidth + this.canvasHeight) / 230;
+        const minRadius = (this.canvasWidth + this.canvasHeight) / 250;
         const maxRadius = (this.canvasWidth + this.canvasHeight) / 100;
         const radiusInternalCircle = minRadius + Math.random() * (maxRadius - minRadius);
 

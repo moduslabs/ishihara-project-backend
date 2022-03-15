@@ -17,10 +17,4 @@ async function handle() {
     await generator.storeS3();
 }
 
-// (async function () {
-//     for (let i = 0; i < 1; i++) {
-//         await handle();
-//     }
-// })()
-
 module.exports = { handle }

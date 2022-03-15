@@ -97,8 +97,10 @@ class Generator {
     }
 
     async store() {
-        const out = createWriteStream(this.name + '.png');
-        const stream = this.canvas.createPNGStream();
+        const out = createWriteStream(this.name + '.jpeg');
+        const stream = this.canvas.createJPEGStream({
+            quality: 0.95
+        });
         stream.pipe(out);
         await new Promise((res, rej) => {
             out.on('finished', res);
@@ -106,11 +108,13 @@ class Generator {
     }
 
     async storeS3() {
-        const stream = this.canvas.createPNGStream();
+        const stream = this.canvas.createJPEGStream({
+            quality: 0.95
+        });
 
         await this.s3Client.put({
             bucket: BUCKET_S3,
-            key: this.name + '.png',
+            key: this.name + '.jpeg',
             body: stream
         });
     }
