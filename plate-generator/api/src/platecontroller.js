@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+const SUB_FOLDERS = require('./subFoldersPlates')
 const BUCKET_NAME = process.env.BUCKET_S3;
 const DEFAULT_LIMIT = 10;
 
@@ -73,6 +74,21 @@ class PlateController {
         }
 
         return selected;
+    }
+
+    groupPlatesByPrefix() {
+        const groups = [];
+
+        files.forEach(plate => {
+            const [subfolder, name] = plate.split("/");
+
+            if (!groups[subfolder]) {
+                groups[subfolder] = []
+            }
+            groups[subfolder].push(name)
+        })
+
+        return groups;
     }
 
     removeSuffixPng(key) {
