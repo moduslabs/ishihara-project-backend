@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
-const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const SUB_FOLDERS = require('./subFoldersPlates')
+
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const BUCKET_NAME = process.env.BUCKET_S3;
 const DEFAULT_LIMIT = 10;
 
@@ -29,9 +30,7 @@ class PlateController {
         } catch (err) {
             return {
                 statusCode: 500,
-                body: {
-                    message: JSON.stringify(err.message)
-                }
+                body: JSON.stringify({ message: err.message })
             }
         }
     }
@@ -54,44 +53,50 @@ class PlateController {
 
     getPlates(files, limit) {
         const selected = [];
-        const alreadyChosen = [];
+        const groupedPlates = this.groupByKeyPrefix(files);
+        const TYPES_PLATES_QUANTITY = SUB_FOLDERS.length;
+        let currentType = 0;
 
         for (let i = 0; i < limit; i++) {
-            const filePosition = Math.floor(Math.random() * files.length);
-            if (alreadyChosen.includes(filePosition)) {
-                i--;
-                continue;
+            const sub = SUB_FOLDERS[currentType]
+            const groupedSet = groupedPlates[sub];
+            currentType++;
+
+            const reachMaxIndex = currentType === TYPES_PLATES_QUANTITY;
+            if (reachMaxIndex) {
+                currentType = 0;
             }
 
-            const { Key: key } = files[filePosition];
+            const position = Math.floor(Math.random() * groupedSet.length);
+            const { Key: key } = groupedSet.splice(position, 1)[0];
+            const [, onlyName] = key.split("/");
 
             selected.push({
-                key: this.removeSuffixPng(key),
+                key: this.removeExtension(onlyName),
                 url: `https://${BUCKET_NAME}.s3.amazonaws.com/${key}`
             });
-
-            alreadyChosen.push(filePosition);
         }
 
         return selected;
     }
 
-    groupPlatesByPrefix() {
+    groupByKeyPrefix(files) {
         const groups = [];
 
         files.forEach(plate => {
-            const [subfolder, name] = plate.split("/");
+            const { Key: key } = plate;
+            const [subfolder] = key.split("/");
 
             if (!groups[subfolder]) {
                 groups[subfolder] = []
             }
-            groups[subfolder].push(name)
+            groups[subfolder].push(plate)
         })
 
         return groups;
     }
 
-    removeSuffixPng(key) {
+    removeExtension(key) {
         return key.split(".")[0];
     }
 }

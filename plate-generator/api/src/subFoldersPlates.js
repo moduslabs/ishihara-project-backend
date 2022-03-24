@@ -1,8 +1,8 @@
-export default [
-    "general-one",
-    "general-two",
-    "general-three",
-    "general-four",
+module.exports = [
+    "red-green-one",
+    "red-green-two",
+    "red-green-three",
+    "red-green-four",
     "protanopy",
     "protanomaly"
 ];

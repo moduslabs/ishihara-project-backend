@@ -13,6 +13,7 @@ environment:
 package:
   patterns:
     - ../../algorithm
+    - '!api/**'
 
 iamRoleStatements:
   - Effect: Allow
