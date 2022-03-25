@@ -66,8 +66,13 @@ class PlateController {
             if (reachMaxIndex) {
                 currentType = 0;
             }
-
+            
+            if (groupedSet.length == 0) {
+                continue;
+            }
+            
             const position = Math.floor(Math.random() * groupedSet.length);
+
             const { Key: key } = groupedSet.splice(position, 1)[0];
             const [, onlyName] = key.split("/");
 
