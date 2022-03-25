@@ -3,7 +3,7 @@ timeout: 300
 events:
   - schedule: 
       rate: rate(1 minute)
-      enabled: false
+      enabled: true
 environment:
   BUCKET_S3: ishihara${self:provider.stage}
   FONTCONFIG_PATH: /var/task/algorithm/fonts
@@ -13,6 +13,7 @@ environment:
 package:
   patterns:
     - ../../algorithm
+    - '!api/**'
 
 iamRoleStatements:
   - Effect: Allow

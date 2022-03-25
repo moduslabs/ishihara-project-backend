@@ -2,7 +2,7 @@ const { createWriteStream } = require('fs');
 const { kdTree } = require('../kd3/kdTree');
 const { createCanvas } = require('canvas');
 
-const { colorsFigure, colorsBackground } = require('../colors/colors');
+const { getRandomStyle } = require('../colors/colors');
 const BUCKET_S3 = process.env.BUCKET_S3;
 
 class Generator {
@@ -17,9 +17,10 @@ class Generator {
     }
 
     generate() {
-        const drawStyle = Math.floor(Math.random() * (colorsFigure.length));
+        const plateStyle = getRandomStyle();
         const plate = this.generatePlateImage();
-        this.name = plate.content;
+        this.name = plateStyle.prefixName + plate.content;
+
         this.fillCanvas('white')
 
         const tree = new kdTree([], function (a, b) {
@@ -59,9 +60,11 @@ class Generator {
 
                 currentStep++;
                 if (this.spotFactory.isOverlapping(plate.data, spot)) {
-                    this.ctx.fillStyle = colorsFigure[drawStyle][Math.floor(Math.random() * colorsFigure[drawStyle].length)];
+                    this.ctx.fillStyle = plateStyle.figure[Math.floor(Math.random() * plateStyle.figure.length)];
+                    // this.ctx.fillStyle = colorsFigure[plateStyle][Math.floor(Math.random() * colorsFigure[plateStyle].length)];
                 } else {
-                    this.ctx.fillStyle = colorsBackground[drawStyle][Math.floor(Math.random() * colorsBackground[drawStyle].length)];
+                    this.ctx.fillStyle = plateStyle.background[Math.floor(Math.random() * plateStyle.background.length)];
+                    // this.ctx.fillStyle = colorsBackground[plateStyle][Math.floor(Math.random() * colorsBackground[plateStyle].length)];
                 }
                 this.spotFactory.draw(this.ctx, spot);
 
@@ -69,7 +72,6 @@ class Generator {
             }
         }
     };
-
 
     generatePlateImage() {
         this.fillCanvas('white');
@@ -118,7 +120,6 @@ class Generator {
             body: stream
         });
     }
-
 }
 
 module.exports = { Generator };
