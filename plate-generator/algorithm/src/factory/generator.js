@@ -61,10 +61,8 @@ class Generator {
                 currentStep++;
                 if (this.spotFactory.isOverlapping(plate.data, spot)) {
                     this.ctx.fillStyle = plateStyle.figure[Math.floor(Math.random() * plateStyle.figure.length)];
-                    // this.ctx.fillStyle = colorsFigure[plateStyle][Math.floor(Math.random() * colorsFigure[plateStyle].length)];
                 } else {
                     this.ctx.fillStyle = plateStyle.background[Math.floor(Math.random() * plateStyle.background.length)];
-                    // this.ctx.fillStyle = colorsBackground[plateStyle][Math.floor(Math.random() * colorsBackground[plateStyle].length)];
                 }
                 this.spotFactory.draw(this.ctx, spot);
 
