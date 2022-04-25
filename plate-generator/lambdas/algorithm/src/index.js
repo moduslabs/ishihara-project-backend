@@ -12,9 +12,9 @@ const circleFactory = new SpotFactory(maxWidth, maxHeight)
 
 const generator = new Generator(maxWidth, maxHeight, s3ClientAdapterV2, plateContentGenerator, circleFactory);
 
-async function handle() {
+async function handler() {
     generator.generate();
     await generator.storeS3();
 }
 
-module.exports = { handle }
+module.exports = { handler }
