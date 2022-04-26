@@ -10,8 +10,15 @@ export class CdkIshiharaStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    getBucketImage(this);
-    createAPIGateway(this, getLambdaSimpleApi(this));
-    configureEventBridgeCron(this, getLambdaPlateGenerator(this));
+    const bucket = getBucketImage(this);
+    const plateGenerator = getLambdaPlateGenerator(this);
+    bucket.grantPut(plateGenerator);
+    bucket.grantPutAcl(plateGenerator);
+
+    const getPlates = getLambdaSimpleApi(this);
+    bucket.grantRead(getPlates);
+
+    createAPIGateway(this, getPlates);
+    configureEventBridgeCron(this, plateGenerator);
   }
 }
