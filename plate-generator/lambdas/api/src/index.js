@@ -107,4 +107,4 @@ class PlateController {
 }
 
 const controller = new PlateController();
-module.exports.handle = controller.handle.bind(controller);
+module.exports.handler = controller.handle.bind(controller);
