@@ -1,3 +1,6 @@
+import "source-map-support/register";
+import * as cdk from "aws-cdk-lib";
+
 import { Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { getBucketImage } from "./resources/s3-bucket-plates";
@@ -5,6 +8,7 @@ import { getLambdaSimpleApi } from "./resources/lambda-api-get-plates";
 import { createAPIGateway } from "./resources/api-gateway-get-plates";
 import { configureEventBridgeCron } from "./resources/cron-plate-generator";
 import { getLambdaPlateGenerator } from "./resources/lambda-plate-generator";
+import { capitalize, getNamespace } from "./util";
 
 export class CdkIshiharaStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -22,3 +26,6 @@ export class CdkIshiharaStack extends Stack {
     configureEventBridgeCron(this, plateGenerator);
   }
 }
+
+const app = new cdk.App();
+new CdkIshiharaStack(app, `CdkIshiharaStack${capitalize(getNamespace())}`);
