@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  NAMESPACE: dev
+  NAMESPACE: stage
 
 jobs:
   deploy:
