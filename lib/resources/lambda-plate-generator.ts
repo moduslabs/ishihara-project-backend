@@ -4,7 +4,7 @@ import { join } from "path";
 import { getLogicalId, getNamespace } from "../util";
 
 const MEMORY_SIZE_MB = 180;
-const TIMEOUT_EXECUTION = Duration.minutes(5);
+const TIMEOUT_EXECUTION = Duration.minutes(10);
 
 export function getLambdaPlateGenerator(stack: Stack) {
   return new Function(stack, getLogicalId("lambda-plate-generator"), {
