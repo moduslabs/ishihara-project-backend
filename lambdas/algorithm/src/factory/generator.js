@@ -37,7 +37,7 @@ class Generator {
 
             while (true) {
                 tries++;
-                if (tries > 1000) {
+                if (tries > 150) {
                     currentStep++;
                     continue paintPlate;
                 }
