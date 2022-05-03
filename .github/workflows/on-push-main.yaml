@@ -33,7 +33,7 @@ jobs:
         
       - name: Install dependencies to Plate Generator Lambda
         run: npm install
-        working-directory: /lambdas/algorithm
+        working-directory: lambdas/algorithm
 
       - name: Synth template
         run: npm run cdk synth
