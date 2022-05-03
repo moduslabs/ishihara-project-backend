@@ -3,6 +3,7 @@ const { kdTree } = require('../kd3/kdTree');
 const { createCanvas } = require('canvas');
 
 const { getRandomStyle } = require('../colors/colors');
+
 const BUCKET_S3 = process.env.BUCKET_S3;
 const MAX_TRIES = 1000;
 

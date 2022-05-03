@@ -28,8 +28,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Install dependencies
+      - name: Install dependencies to deploy project
         run: npm install
+        
+      - name: Install dependencies to Plate Generator Lambda
+        run: npm install
+        working-directory: lambdas/algorithm
 
       - name: Synth template
         run: npm run cdk synth
