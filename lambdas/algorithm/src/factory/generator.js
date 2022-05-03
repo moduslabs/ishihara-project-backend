@@ -4,6 +4,7 @@ const { createCanvas } = require('canvas');
 
 const { getRandomStyle } = require('../colors/colors');
 const BUCKET_S3 = process.env.BUCKET_S3;
+const MAX_TRIES = 1000;
 
 class Generator {
     constructor(maxWidth, maxHeight, s3Client, plateGenerator, spotFactory) {
@@ -19,7 +20,6 @@ class Generator {
     generate() {
         const plateStyle = getRandomStyle();
         const plate = this.generatePlateImage();
-        console.log('generate plateImage executed')
         this.name = plateStyle.prefixName + plate.content;
 
         this.fillCanvas('white')
@@ -31,13 +31,12 @@ class Generator {
         let currentStep = 0;
         const area = (this.canvas.width * this.canvas.height);
         const steps = (area / 150) * 7;
-        console.log('Before enter at while')
         paintPlate: while (currentStep < steps) {
             var tries = 0;
 
             while (true) {
                 tries++;
-                if (tries > 150) {
+                if (tries > MAX_TRIES) {
                     currentStep++;
                     continue paintPlate;
                 }
@@ -70,7 +69,6 @@ class Generator {
                 tree.insert(spot);
             }
         }
-        console.log('outside of labeled while')
     };
 
     generatePlateImage() {
@@ -81,7 +79,6 @@ class Generator {
         this.ctx.textAlign = 'center';
 
         const plateContent = this.plateValueGenerator.getContent();
-        console.log(`plateContent ${plateContent}`)
         this.ctx.fillText(plateContent, this.maxWidth / 2, this.maxHeight / 2);
 
         return {
@@ -111,18 +108,14 @@ class Generator {
     }
 
     async storeS3() {
-        console.log('store s3 start')
         const stream = this.canvas.createJPEGStream({
             quality: 0.95
         });
-        console.log('opened the stream')
         await this.s3Client.put({
             bucket: BUCKET_S3,
             key: this.name + '.jpeg',
             body: stream
         });
-
-        console.log('the object was put into the bucket ' + BUCKET_S3)
     }
 }
 
