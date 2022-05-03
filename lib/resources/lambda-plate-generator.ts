@@ -3,7 +3,7 @@ import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { join } from "path";
 import { getLogicalId, getNamespace } from "../util";
 
-const MEMORY_SIZE_MB = 180;
+const MEMORY_SIZE_MB = 256;
 const TIMEOUT_EXECUTION = Duration.minutes(10);
 
 export function getLambdaPlateGenerator(stack: Stack) {

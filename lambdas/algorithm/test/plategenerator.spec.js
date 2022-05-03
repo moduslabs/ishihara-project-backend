@@ -3,8 +3,8 @@ const { S3ClientAdapterV2 } = require('../src/s3/s3Adapterv2');
 const { SpotFactory } = require('../src/factory/spotFactory');
 const { PlateContentGenerator } = require('../src/plategenerator/platecontentgenerator')
 
-const maxWidth = 300;
-const maxHeight = 300;
+const maxWidth = 350;
+const maxHeight = 350;
 
 const s3ClientAdapterV2 = new S3ClientAdapterV2();
 const plateContentGenerator = new PlateContentGenerator();
