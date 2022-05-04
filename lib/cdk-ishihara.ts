@@ -1,7 +1,7 @@
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 
-import { Stack, StackProps } from "aws-cdk-lib";
+import { DefaultStackSynthesizer, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { getBucketImage } from "./resources/s3-bucket-plates";
 import { getLambdaSimpleApi } from "./resources/lambda-api-get-plates";
@@ -28,4 +28,8 @@ export class CdkIshiharaStack extends Stack {
 }
 
 const app = new cdk.App();
-new CdkIshiharaStack(app, `CdkIshiharaStack${capitalize(getNamespace())}`);
+new CdkIshiharaStack(app, `CdkIshiharaStack${capitalize(getNamespace())}`, {
+  synthesizer: new DefaultStackSynthesizer({
+    qualifier: "default",
+  }),
+});
