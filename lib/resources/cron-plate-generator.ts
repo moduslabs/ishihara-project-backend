@@ -8,6 +8,6 @@ export function configureEventBridgeCron(stack: Stack, lambda: IFunction) {
   return new Rule(stack, getLogicalId("cron-plate-generator"), {
     schedule: Schedule.cron({}),
     targets: [new LambdaFunction(lambda)],
-    enabled: false,
+    enabled: true,
   });
 }
