@@ -28,4 +28,8 @@ export class CdkIshiharaStack extends Stack {
 }
 
 const app = new cdk.App();
-new CdkIshiharaStack(app, `CdkIshiharaStack${capitalize(getNamespace())}`);
+new CdkIshiharaStack(app, `CdkIshiharaStack${capitalize(getNamespace())}`, {
+  synthesizer: new cdk.DefaultStackSynthesizer({
+    qualifier: process.env.QUALIFIER || 'local',
+  }),
+});
