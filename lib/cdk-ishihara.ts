@@ -9,6 +9,8 @@ import { createAPIGateway } from "./resources/api-gateway-get-plates";
 import { configureEventBridgeCron } from "./resources/cron-plate-generator";
 import { getLambdaPlateGenerator } from "./resources/lambda-plate-generator";
 import { capitalize, getNamespace } from "./util";
+import {getHostedZone, getHostedZoneRecords} from "./resources/route-53";
+import {getHTTPSCertificate} from "./resources/certificate-dns";
 
 export class CdkIshiharaStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -22,8 +24,12 @@ export class CdkIshiharaStack extends Stack {
     const getPlates = getLambdaSimpleApi(this);
     bucket.grantRead(getPlates);
 
-    createAPIGateway(this, getPlates);
     configureEventBridgeCron(this, plateGenerator);
+
+    const hostedZone = getHostedZone(this);
+    const certificate = getHTTPSCertificate(this, hostedZone);
+    const api = createAPIGateway(this, certificate, getPlates);
+    getHostedZoneRecords(this, hostedZone, api);
   }
 }
 

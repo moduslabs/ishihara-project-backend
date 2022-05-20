@@ -1,13 +1,13 @@
 import { Duration, Stack } from "aws-cdk-lib";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { join } from "path";
-import { getLogicalId, getNamespace } from "../util";
+import { getNamespace, getResourceName } from "../util";
 
 const MEMORY_SIZE_MB = 256;
 const TIMEOUT_EXECUTION = Duration.minutes(10);
 
 export function getLambdaPlateGenerator(stack: Stack) {
-  return new Function(stack, getLogicalId("lambda-plate-generator"), {
+  return new Function(stack, getResourceName("lambda-plate-generator"), {
     runtime: Runtime.NODEJS_14_X,
     handler: "src/index.handler",
     memorySize: MEMORY_SIZE_MB,

@@ -1,9 +1,9 @@
 import { Stack } from "aws-cdk-lib";
 import { Bucket, BucketAccessControl, HttpMethods } from "aws-cdk-lib/aws-s3";
-import { getLogicalId, getNamespace } from "../util";
+import { getNamespace, getResourceName } from "../util";
 
 export function getBucketImage(stack: Stack) {
-  return new Bucket(stack, getLogicalId("bucket-ishihara"), {
+  return new Bucket(stack, getResourceName("bucket-ishihara"), {
     accessControl: BucketAccessControl.PRIVATE,
     cors: [
       {
