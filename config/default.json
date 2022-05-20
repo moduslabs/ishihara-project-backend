@@ -1,0 +1,6 @@
+{
+    "cdk": {
+        "zoneName": "ishihara-app.com",
+        "hostedZoneId": "Z054722611ERV11JTXKBK"
+    }
+}
