@@ -7,11 +7,12 @@ import {
   RecordTarget,
 } from "aws-cdk-lib/aws-route53";
 import { ApiGateway } from "aws-cdk-lib/aws-route53-targets";
-import { getAPIDomain, getCdkConfiguration, getResourceName } from "../util";
+import { getAPIDomain,getFeedbackDomain,  getCdkConfiguration, getResourceName } from "../util";
 
 export interface NetworkSchema {
   hostedZone: IHostedZone;
   apiARecord: ARecord;
+  feedbackARecord: ARecord;
 }
 
 export function getHostedZone(stack: Stack): IHostedZone {
@@ -29,9 +30,11 @@ export function getHostedZone(stack: Stack): IHostedZone {
 export function getHostedZoneRecords(
   stack: Stack,
   hostedZone: IHostedZone,
-  restApi: RestApi
+  restApi: RestApi,
+  feedbackApi: RestApi,
 ): NetworkSchema {
   const apiDomain = getAPIDomain();
+  const feedbackDomain = getFeedbackDomain();
 
   const apiARecord = new ARecord(stack, getResourceName("rest-api-arecord"), {
     recordName: apiDomain,
@@ -39,10 +42,21 @@ export function getHostedZoneRecords(
     zone: hostedZone,
   });
 
+  const feedbackARecord = new ARecord(stack, getResourceName("feedback-api-arecord"), {
+    recordName: feedbackDomain,
+    target: RecordTarget.fromAlias(new ApiGateway(feedbackApi)),
+    zone: hostedZone,
+  });
+
+
+
   console.info("RestAPI: ", apiDomain);
+  console.info("FeedbackAPI: ", feedbackDomain);
 
   return {
     hostedZone,
-    apiARecord
+    apiARecord,
+    feedbackARecord,
   };
 }
+

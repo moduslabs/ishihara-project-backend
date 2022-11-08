@@ -15,6 +15,7 @@
     "@types/config": "^0.0.41",
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
+    "@types/uuid": "^8.3.4",
     "aws-cdk": "2.20.0",
     "jest": "^26.4.2",
     "ts-jest": "^26.2.0",
@@ -26,6 +27,7 @@
     "aws-sdk": "^2.1116.0",
     "config": "^3.3.7",
     "constructs": "^10.0.0",
-    "source-map-support": "^0.5.16"
+    "source-map-support": "^0.5.16",
+    "uuid": "^9.0.0"
   }
 }

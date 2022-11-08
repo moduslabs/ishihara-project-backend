@@ -36,6 +36,13 @@ jobs:
         run: npm install
         working-directory: lambdas/algorithm
 
+      - name: Install dependencies to feedback lambda
+        run: npm install
+        working-directory: lambdas/feedback
+
+      - name: Build TypeScript lambda files
+        run: npm run build
+
       - name: Synth template
         run: npm run cdk synth
 
