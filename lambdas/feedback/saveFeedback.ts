@@ -1,14 +1,15 @@
 /* Lambda function to save feedback to DynamoDB */
-import { APIGatewayProxyHandler } from "aws-lambda";
-import { DynamoDB} from "aws-sdk";
+import { APIGatewayProxyHandler, APIGatewayProxyEvent } from "aws-lambda";
+import { DynamoDB } from "aws-sdk";
 import * as uuid from "uuid";
 
 
-const dynamoDb = new DynamoDB.DocumentClient();
 
-export const handler: APIGatewayProxyHandler = async (event) => {
+export const handler: APIGatewayProxyHandler = async (
+  event: APIGatewayProxyEvent
+) => {
   const data = JSON.parse(event.body!);
-
+  const dynamoDb = new DynamoDB.DocumentClient();
   const params = {
     TableName: process.env.TABLE_NAME!,
     Item: {
