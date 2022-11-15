@@ -8,6 +8,8 @@ import { getLambdaSimpleApi } from "./resources/lambda-api-get-plates";
 import {
   getLambdaApiSaveFeedback,
   getFeedbackTable,
+  getUploadImageLambda,
+  getFeedbackImageBucket,
 } from "./resources/save-feedback-resources";
 import { createAPIGateway } from "./resources/api-gateway-get-plates";
 import { createFeedbackGatewayApi } from "./resources/api-gateway-feedback";
@@ -29,14 +31,22 @@ export class CdkIshiharaStack extends Stack {
     const getPlates = getLambdaSimpleApi(this);
     bucket.grantRead(getPlates);
 
-    //Fedback
+    //--- Fedback resources -----
     const feedbackTable = getFeedbackTable(this);
+    const feedbackImageBucket = getFeedbackImageBucket(this);
+    // Lambda used to generate signed url to upload image to s3
+    const feedbackImageUploadUrlLambda = getUploadImageLambda(this, {
+      environment: {
+        BUCKET_NAME: feedbackImageBucket.bucketName,
+      },
+    });
+
     const feedbackLambda = getLambdaApiSaveFeedback(this, {
       environment: { TABLE_NAME: feedbackTable.tableName },
     });
-    feedbackTable.grantReadWriteData(feedbackLambda);
-   
 
+    feedbackTable.grantReadWriteData(feedbackLambda);
+    feedbackImageBucket.grantReadWrite(feedbackImageUploadUrlLambda);
 
     configureEventBridgeCron(this, plateGenerator);
 
