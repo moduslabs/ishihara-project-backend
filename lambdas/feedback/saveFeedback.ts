@@ -18,6 +18,7 @@ export const handler: APIGatewayProxyHandler = async (
       email: data.email,
       message: data.message,
       createdAt: new Date().toISOString(),
+      imageBucketId: data.imageBucketId,
     },
   };
 

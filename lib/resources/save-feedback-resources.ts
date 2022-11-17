@@ -36,25 +36,3 @@ export function getLambdaApiSaveFeedback(
     ...props,
   });
 }
-
-export function getUploadImageLambda(scope: Construct, props?: Partial<FunctionProps>): Function {
-  return new Function(scope, `LambdaUploadImage${getNamespace()}`, {
-    runtime: Runtime.NODEJS_14_X,
-    handler: "uploadImage.handler",
-    code: Code.fromAsset("lambdas/getUploadImageSignedUrl"),
-    ...props,
-  });
-}
-
-export function getFeedbackImageBucket(scope: Construct): Bucket {
-  return new Bucket(scope, `FeedbackImageBucket${getNamespace()}`, {
-    accessControl: BucketAccessControl.PRIVATE,
-    cors: [
-      {
-        allowedOrigins: ["*"],
-        allowedMethods: [HttpMethods.GET, HttpMethods.PUT, HttpMethods.HEAD],
-      },
-    ],
-    bucketName: `feedback-image-${getNamespace()}`,
-  });
-}
