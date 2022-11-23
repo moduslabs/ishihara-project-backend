@@ -1,0 +1,19 @@
+{
+  "name": "feedback-lambda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "saveFeedback.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1080.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~3.9.7"
+  }
+}
