@@ -12,7 +12,7 @@
   "author": "Rafael Waterkemper",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.1080.0",
+    "aws-sdk": "^2.1354.0",
     "canvas": "2.9.0"
   }
 }
